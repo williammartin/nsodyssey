@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -ex
+
+export GOPATH=$PWD/gopath
+export PATH=$GOPATH/bin:$PATH
+mkdir $GOPATH/bin
+
+curl https://glide.sh/get | sh
+
+cd $GOPATH/src/github.com/williammartin/nsodyssey
+glide install
+
+go vet $(glide novendor)
+ginkgo -tags daemon -r -p -race -cover -keepGoing -nodes=1 "$@"
+

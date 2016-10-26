@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+build_yml=$1
+shift
+
+if [ -z $REMOTE_ATC_URL ]; then
+  fly -t lite sync
+  fly -t lite login -c http://192.168.100.4:8080
+  fly -t lite e -x -p -i nsodyssey=. -c $build_yml $@
+else
+  fly --target $REMOTE_ATC_URL sync
+  fly --target $REMOTE_ATC_URL e -x -p -i nsodyssey=. -c $build_yml $@
+fi
+
